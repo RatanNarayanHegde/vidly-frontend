@@ -50,7 +50,7 @@ class Movies extends Component {
     this.setState({ sortColumn });
   };
 
-  render() {
+  getPagedData = () => {
     const {
       movies: allMovies,
       sortColumn,
@@ -67,6 +67,17 @@ class Movies extends Component {
 
     const movies = paginate(sorted, pageSize, currPage);
 
+    return { totalCount: filtered.length, data: movies };
+  };
+
+  render() {
+    const { sortColumn, pageSize, currPage } = this.state;
+
+    if (this.state.movies.length === 0)
+      return <h2>There are no movies in the database</h2>;
+
+    const { totalCount, data: movies } = this.getPagedData();
+
     return (
       <div className="row">
         <div className="col-3 mt-3">
@@ -77,28 +88,24 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          {filtered.length === 0 ? (
-            <h2 className="m-2">There are no movies in the database</h2>
-          ) : (
-            <div>
-              <h2 className="m-2">
-                There are {filtered.length} movies in the database.{" "}
-              </h2>
-              <MoviesTable
-                movies={movies}
-                onLike={this.handleLike}
-                onDelete={this.handleDelete}
-                onSort={this.handleSort}
-                sortColumn={sortColumn}
-              />
-              <Pagination
-                totalCount={filtered.length}
-                pageSize={pageSize}
-                currPage={currPage}
-                onPageChange={this.handlePageChange}
-              />
-            </div>
-          )}
+          <div>
+            <h2 className="m-2">
+              There are {totalCount} movies in the database.{" "}
+            </h2>
+            <MoviesTable
+              movies={movies}
+              onLike={this.handleLike}
+              onDelete={this.handleDelete}
+              onSort={this.handleSort}
+              sortColumn={sortColumn}
+            />
+            <Pagination
+              totalCount={totalCount}
+              pageSize={pageSize}
+              currPage={currPage}
+              onPageChange={this.handlePageChange}
+            />
+          </div>
         </div>
       </div>
     );
