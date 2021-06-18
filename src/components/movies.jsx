@@ -5,9 +5,19 @@ import paginate from "../utils/paginate";
 import ListGroup from "./common/listGroup";
 import { getGenres } from "../services/fakeGenreService";
 import MoviesTable from "./moviesTable";
+import _ from "lodash";
 
 class Movies extends Component {
-  state = { movies: [], genres: [], pageSize: 4, currPage: 1 };
+  state = {
+    movies: [],
+    genres: [],
+    pageSize: 4,
+    currPage: 1,
+    sortColumn: {
+      path: "title",
+      order: "asc",
+    },
+  };
 
   componentDidMount() {
     const genres = [{ name: "All Movies", _id: "" }, ...getGenres()];
@@ -36,17 +46,26 @@ class Movies extends Component {
     this.setState({ currPage });
   };
 
-  handleSort = (path) => {
-    console.log(path);
+  handleSort = (sortColumn) => {
+    this.setState({ sortColumn });
   };
 
   render() {
-    const { movies: allMovies, selectedGenre, pageSize, currPage } = this.state;
+    const {
+      movies: allMovies,
+      sortColumn,
+      selectedGenre,
+      pageSize,
+      currPage,
+    } = this.state;
     const filtered =
       selectedGenre && selectedGenre._id
         ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
         : allMovies;
-    const movies = paginate(filtered, pageSize, currPage);
+
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+
+    const movies = paginate(sorted, pageSize, currPage);
 
     return (
       <div className="row">
@@ -70,6 +89,7 @@ class Movies extends Component {
                 onLike={this.handleLike}
                 onDelete={this.handleDelete}
                 onSort={this.handleSort}
+                sortColumn={sortColumn}
               />
               <Pagination
                 totalCount={filtered.length}
