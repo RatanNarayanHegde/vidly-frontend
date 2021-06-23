@@ -115,9 +115,11 @@ class Movies extends Component {
         </div>
         <div className="col">
           <div>
-            <Link to="/movies/new" className="btn btn-primary">
-              Add new Movie
-            </Link>
+            {this.props.user && (
+              <Link to="/movies/new" className="btn btn-primary">
+                Add new Movie
+              </Link>
+            )}
             <h2 className="m-2">
               There are {totalCount} movies in the database.{" "}
             </h2>
