@@ -61,8 +61,8 @@ class MovieForm extends Form {
     dailyRentalRate: Joi.number().min(0).max(10).required().label("Rate"),
   };
 
-  doSubmit = () => {
-    saveMovie(this.state.data);
+  doSubmit = async () => {
+    await saveMovie(this.state.data);
 
     this.props.history.push("/movies");
   };
